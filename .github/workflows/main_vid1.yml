@@ -35,6 +35,11 @@ jobs:
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
+      - name: Install OpenGL Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-glx
+
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
         with:
