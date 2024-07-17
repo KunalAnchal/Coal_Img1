@@ -49,7 +49,9 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+    permissions:
+      id-token: write #This is required for requesting the JWT
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -60,10 +62,17 @@ jobs:
         run: unzip release.zip
 
       
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3B53618E70DE4A07B1638D801637BB94 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_499B4CF70CA04687B4BAD9CC23A1F88D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BA95E10F88074860B35EDC634DD44353 }}
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'CoalVA1'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_8369920615B44F5A8BD73F5E8C36C966 }}
+          
